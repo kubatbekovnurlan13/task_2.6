@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -42,41 +44,32 @@ public class StudentDAOTest extends PostgresContainer {
 
     @Test
     void getByName_testGetByName_whenValueInput() {
-        Student student = new Student("first_2", "last_2");
+        Optional<Student> student = Optional.of(new Student("first_2", "last_2"));
 
-        Student actual = studentDAO.findByName(student.getFirstName());
-        actual.setStudentId(0);
+        Optional<Student> actual = studentDAO.findByName(student.get().getFirstName());
+        actual.get().setStudentId(0);
         assertEquals(student, actual);
     }
 
 
     @Test
     void getByName_testGetByName_whenWrongValueInput() {
-        Student student = new Student();
-        Student actual = studentDAO.findByName("wrong_value");
-        assertEquals(student, actual);
-    }
-
-
-    @Test
-    void update_testUpdateOfValue_whenValueInput() {
-        Student student = new Student(1,"first_name_new", "last_name_new");
-
-        Student actual = studentDAO.update(student);
+        Optional<Student> student = Optional.empty();
+        Optional<Student> actual = studentDAO.findByName("wrong_value");
         assertEquals(student, actual);
     }
 
     @Test
-    void update_testUpdateOfValue_whenValueInputNotUpdated() {
-        Student actual = studentDAO.update(new Student());
-        Student expected = new Student();
-        assertEquals(expected, actual);
+    void getById_testGetById_whenValueInput() {
+        Optional<Student> student = Optional.of(new Student(101,"first_101", "last_101"));
+        Optional<Student> actual = studentDAO.findById(101);
+        assertEquals(student, actual);
     }
 
     @Test
-    void update_testUpdateOfValue_whenNullInput() {
-        Exception exception = assertThrows(NullPointerException.class,
-                () -> studentDAO.update(null));
-        assertEquals("Cannot invoke \"kg.kubatbekov.DataJPA.model.Student.getStudentId()\" because \"student\" is null", exception.getMessage());
+    void getById_testGetById_whenWrongValueInput() {
+        Optional<Student> student = Optional.empty();
+        Optional<Student> actual = studentDAO.findById(1000000);
+        assertEquals(student, actual);
     }
 }

@@ -1,15 +1,16 @@
 package kg.kubatbekov.DataJPA.daoInterface;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DAO<T> {
     T save(T t);
 
-    T findByName(String name);
+    Optional<T> findByName(String name);
 
     List<T> findAll();
 
-    T update(T t);
+    Optional<T> findById(int id);
 
     void deleteById(int id);
 }

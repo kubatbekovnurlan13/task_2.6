@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GroupService {
@@ -21,11 +22,14 @@ public class GroupService {
     }
 
     public Group findByName(String name) {
-        return groupDAO.findByName(name);
+        return groupDAO.findByName(name).orElse(new Group());
     }
 
     public List<Group> findLessOrEqualStudentCount(int count) {
-        return groupDAO.findLessOrEqualStudentCount(count);
+        return groupDAO.findAll()
+                .stream()
+                .filter(group -> group.getStudents().size() <= count & group.getStudents().size() != 0)
+                .toList();
     }
 
     public List<Group> findAll() {
@@ -33,7 +37,13 @@ public class GroupService {
     }
 
     public Group update(Group group) {
-        return groupDAO.update(group);
+        Optional<Group> groupToUpdate = groupDAO.findById(group.getGroupId());
+        if (groupToUpdate.isPresent()) {
+            groupToUpdate.get().setGroupName(group.getGroupName());
+            groupToUpdate.get().setStudents(group.getStudents());
+            return groupDAO.save(groupToUpdate.get());
+        }
+        return new Group();
     }
 
     public void deleteById(int group_id) {

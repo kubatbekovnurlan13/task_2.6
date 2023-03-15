@@ -24,8 +24,8 @@ public class GroupDAO implements DAO<Group> {
     }
 
     @Override
-    public Group findByName(String name) {
-        return groupRepository.findByName(name).orElse(new Group());
+    public Optional<Group> findByName(String name) {
+        return groupRepository.findByName(name);
     }
 
     @Override
@@ -33,22 +33,9 @@ public class GroupDAO implements DAO<Group> {
         return groupRepository.findAll();
     }
 
-    public List<Group> findLessOrEqualStudentCount(int count) {
-        return groupRepository.findAll()
-                .stream()
-                .filter(group -> group.getStudents().size() <= count & group.getStudents().size() != 0)
-                .toList();
-    }
-
     @Override
-    public Group update(Group group) {
-        Optional<Group> groupToUpdate = groupRepository.findById(group.getGroupId());
-        if (groupToUpdate.isPresent()) {
-            groupToUpdate.get().setGroupName(group.getGroupName());
-            groupToUpdate.get().setStudents(group.getStudents());
-            return groupRepository.save(groupToUpdate.get());
-        }
-        return new Group();
+    public Optional<Group> findById(int id) {
+        return groupRepository.findById(id);
     }
 
     @Override

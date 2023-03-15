@@ -29,25 +29,13 @@ public class StudentDAO implements DAO<Student> {
     }
 
     @Override
-    public Student findByName(String name) {
-        return studentRepository.findByName(name).orElse(new Student());
-    }
-
-    public Student findById(int id) {
-        return studentRepository.findById(id).orElse(new Student());
+    public Optional<Student> findByName(String name) {
+        return studentRepository.findByName(name);
     }
 
     @Override
-    public Student update(Student student) {
-        Optional<Student> studentToUpdate = studentRepository.findById(student.getStudentId());
-        if (studentToUpdate.isPresent()) {
-            studentToUpdate.get().setFirstName(student.getFirstName());
-            studentToUpdate.get().setLastName(student.getLastName());
-            studentToUpdate.get().setGroup(student.getGroup());
-            studentToUpdate.get().setCourses(student.getCourses());
-            return studentRepository.save(studentToUpdate.get());
-        }
-        return new Student();
+    public Optional<Student> findById(int id) {
+        return studentRepository.findById(id);
     }
 
     @Override

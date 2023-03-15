@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -36,55 +38,36 @@ public class GroupDAOTest extends PostgresContainer {
 
     @Test
     void getByName_testGetByName_whenValueInput() {
-        Group expected = new Group(1, "group_1");
-        Group actual = groupDAO.findByName(expected.getGroupName());
+        Optional<Group> expected = Optional.of(new Group(1, "group_1"));
+        Optional<Group> actual = groupDAO.findByName(expected.get().getGroupName());
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void getByName_testGetByName_whenWrongValueInput() {
-        Group expected = new Group();
-        Group actual = groupDAO.findByName("wrong_value");
+        Optional<Group> expected = Optional.empty();
+        Optional<Group> actual = groupDAO.findByName("wrong_value");
         Assertions.assertEquals(expected, actual);
     }
+
+    @Test
+    void getById_testGetById_whenValueInput() {
+        Optional<Group> expected = Optional.of(new Group(1, "group_1"));
+        Optional<Group> actual = groupDAO.findById(1);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void getById_testGetById_whenWrongValueInput() {
+        Optional<Group> expected = Optional.empty();
+        Optional<Group> actual = groupDAO.findById(100000);
+        Assertions.assertEquals(expected, actual);
+    }
+
 
     @Test
     void getAll_testGetAllValues_whenThereIsValues() {
         int actual = groupDAO.findAll().size();
         Assertions.assertEquals(10, actual);
-    }
-
-    @Test
-    void findLessOrEqualStudentAccounts_testFindLessOrEqualStudentAccounts_whenThereIsValues() {
-        int actual = groupDAO.findLessOrEqualStudentCount(19).size();
-        Assertions.assertEquals(3, actual);
-    }
-
-    @Test
-    void findLessOrEqualStudentAccounts_testFindLessOrEqualStudentAccounts_whenThereIsNoValues() {
-        int actual = groupDAO.findLessOrEqualStudentCount(1).size();
-        Assertions.assertEquals(0, actual);
-    }
-
-    @Test
-    void update_testUpdateOfValue_whenValueInput() {
-        Group group = new Group(1, "group_1");
-
-        Group actual = groupDAO.update(group);
-        Assertions.assertEquals(group, actual);
-    }
-
-    @Test
-    void update_testUpdateOfValue_whenValueInputNotUpdated() {
-        Group actual = groupDAO.update(new Group());
-        Group expected = new Group();
-        Assertions.assertEquals(expected, actual);
-    }
-
-    @Test
-    void update_testUpdateOfValue_whenNullInput() {
-        Exception exception = assertThrows(NullPointerException.class,
-                () -> groupDAO.update(null));
-        Assertions.assertEquals("Cannot invoke \"kg.kubatbekov.DataJPA.model.Group.getGroupId()\" because \"group\" is null", exception.getMessage());
     }
 }
