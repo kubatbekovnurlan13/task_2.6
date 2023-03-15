@@ -1,7 +1,7 @@
 package kg.kubatbekov.DataJPA.service;
 
-import kg.kubatbekov.DataJPA.dao.GroupDAO;
 import kg.kubatbekov.DataJPA.model.Group;
+import kg.kubatbekov.DataJPA.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,43 +10,43 @@ import java.util.Optional;
 
 @Service
 public class GroupService {
-    private final GroupDAO groupDAO;
+    private final GroupRepository groupRepository;
 
     @Autowired
-    public GroupService(GroupDAO groupDAO) {
-        this.groupDAO = groupDAO;
+    public GroupService(GroupRepository groupRepository) {
+        this.groupRepository = groupRepository;
     }
 
     public Group save(Group group) {
-        return groupDAO.save(group);
+        return groupRepository.save(group);
     }
 
     public Group findByName(String name) {
-        return groupDAO.findByName(name).orElse(new Group());
+        return groupRepository.findByName(name).orElse(new Group());
     }
 
     public List<Group> findLessOrEqualStudentCount(int count) {
-        return groupDAO.findAll()
+        return groupRepository.findAll()
                 .stream()
                 .filter(group -> group.getStudents().size() <= count & group.getStudents().size() != 0)
                 .toList();
     }
 
     public List<Group> findAll() {
-        return groupDAO.findAll();
+        return groupRepository.findAll();
     }
 
     public Group update(Group group) {
-        Optional<Group> groupToUpdate = groupDAO.findById(group.getGroupId());
+        Optional<Group> groupToUpdate = groupRepository.findById(group.getGroupId());
         if (groupToUpdate.isPresent()) {
             groupToUpdate.get().setGroupName(group.getGroupName());
             groupToUpdate.get().setStudents(group.getStudents());
-            return groupDAO.save(groupToUpdate.get());
+            return groupRepository.save(groupToUpdate.get());
         }
         return new Group();
     }
 
     public void deleteById(int group_id) {
-        groupDAO.deleteById(group_id);
+        groupRepository.deleteById(group_id);
     }
 }

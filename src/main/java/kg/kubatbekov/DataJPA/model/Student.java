@@ -52,8 +52,6 @@ public class Student {
         this.lastName = lastName;
     }
 
-
-
     public Course getCourseByIdFromList(int courseId){
         return courses.stream().filter(v->v.getCourseId()==courseId).toList().get(0);
     }
